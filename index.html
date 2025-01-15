@@ -21,17 +21,25 @@
             width: 100%;
             max-width: 600px;
             padding: 20px;
+            box-sizing: border-box;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
         }
         .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px 0;
+            padding: 12px 20px;
+            font-size: 18px;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             width: 100%;
+            max-width: 300px;
+            text-align: center;
         }
         .game-btn {
             padding: 20px 40px;
@@ -42,6 +50,8 @@
             border-radius: 10px;
             cursor: pointer;
             width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
         }
         .status {
             font-size: 18px;
@@ -58,13 +68,16 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: black; /* 기본: 검은색 */
+            background-color: black;
         }
         .bullet {
-            background-color: red; /* 빨간색 원 */
+            background-color: red;
         }
         .empty {
-            background-color: gray; /* 회색 원 */
+            background-color: gray;
+        }
+        .hidden {
+            display: none;
         }
         .game-over {
             position: fixed;
@@ -82,16 +95,17 @@
             z-index: 9999;
         }
         @media (max-width: 600px) {
-            .game-btn {
-                font-size: 20px;
-                padding: 15px 30px;
-            }
-            .button {
-                font-size: 14px;
-                padding: 8px 16px;
+            .button, .game-btn {
+                font-size: 16px;
+                padding: 10px 15px;
             }
             .status {
                 font-size: 16px;
+            }
+            .chamber {
+                width: 15px;
+                height: 15px;
+                margin: 3px;
             }
         }
     </style>
@@ -100,7 +114,7 @@
 
     <div class="container">
         <h1>러시안 룰렛</h1>
-        <div id="mode-selection">
+        <div id="mode-selection" class="button-container">
             <button class="button" onclick="startGame(1)">1. 매번 약실을 돌리는 룰렛</button>
             <button class="button" onclick="startGame(2)">2. 약실을 돌리지 않는 룰렛</button>
             <button class="button" onclick="startGame(3)">3. 매번 약실에 총알을 채우는 룰렛</button>
@@ -142,7 +156,7 @@
         function fireTrigger() {
             roundCount++;
             let shot;
-            switch (mode) {
+            switch(mode) {
                 case 1:
                     if (isModeOne) {
                         shot = Math.floor(Math.random() * 6) + 1;
@@ -154,7 +168,7 @@
                                 alert('딸깍...');
                             }
                         } else {
-                            alert('모드 1-2로 전환됩니다.');
+                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
                             isModeOne = false;
                         }
                     } else {
@@ -204,7 +218,7 @@
                         for (let i = 0; i < totalChambers; i++) {
                             const chamber = document.createElement('div');
                             chamber.classList.add('chamber');
-                            if (i === totalChambers - 1) chamber.classList.add('bullet');
+                            if (i === 5) chamber.classList.add('bullet');
                             bulletContainer.appendChild(chamber);
                         }
                     } else {
@@ -221,7 +235,7 @@
                     for (let i = 0; i < totalChambers; i++) {
                         const chamber = document.createElement('div');
                         chamber.classList.add('chamber');
-                        if (i === totalChambers - 1) chamber.classList.add('bullet');
+                        if (i === 5) chamber.classList.add('bullet');
                         else if (i < emptyChambers) chamber.classList.add('empty');
                         bulletContainer.appendChild(chamber);
                     }
