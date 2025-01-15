@@ -124,7 +124,8 @@
         let currentChamber = 1;
         let bullets = 1;
         let roundCount = 0;
-        let emptyChambers = 0; // 모드 2에서 회색 원을 차는 변수
+        let emptyChambers = 0;
+        let isModeOne = true;
         const totalChambers = 6;
 
         function startGame(selectedMode) {
@@ -134,6 +135,7 @@
             bullets = 1;
             roundCount = 0;
             emptyChambers = 0;
+            isModeOne = true;
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -145,7 +147,7 @@
             roundCount++;
             let shot;
             switch(mode) {
-                               case 1:
+                case 1:
                     if (isModeOne) {
                         shot = Math.floor(Math.random() * 6) + 1;
                         if (roundCount <= 5) {
@@ -175,7 +177,7 @@
                         gameOver('빵!');
                     } else {
                         currentChamber++;
-                        emptyChambers++;  // 모드 2에서 시행 횟수마다 빈 칸을 하나씩 채움
+                        emptyChambers++;
                         alert('딸깍...');
                     }
                     break;
@@ -205,13 +207,25 @@
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
                 
-                // 빨간 원: 오른쪽부터 차오르는 총알
-                if (i >= totalChambers - bullets) {
-                    chamber.classList.add('bullet');
+                if (mode === 1 && !isModeOne) {
+                    // 모드 1-2: 5/6 확률로 차오르는 총알
+                    if (i < 5) {
+                        chamber.classList.add('bullet');
+                    }
                 } 
-                // 회색 원: 왼쪽부터 차오르는 빈 칸 (모드 2에서만 적용)
-                else if (mode === 2 && i < emptyChambers) {
-                    chamber.classList.add('empty');
+                else if (mode === 2) {
+                    // 모드 2: 빈 칸이 점차 채워짐
+                    if (i < emptyChambers) {
+                        chamber.classList.add('empty');
+                    } else {
+                        chamber.classList.add('bullet');
+                    }
+                } 
+                else if (mode === 3) {
+                    // 모드 3: 매번 총알이 하나씩 증가
+                    if (i < bullets) {
+                        chamber.classList.add('bullet');
+                    }
                 }
                 bulletContainer.appendChild(chamber);
             }
