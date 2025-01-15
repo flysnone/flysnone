@@ -124,8 +124,7 @@
         let currentChamber = 1;
         let bullets = 1;
         let roundCount = 0;
-        let emptyChambers = 0;
-        let isModeOne = true;
+        let emptyChambers = 0; // 모드 2에서 회색 원을 차는 변수
         const totalChambers = 6;
 
         function startGame(selectedMode) {
@@ -135,7 +134,6 @@
             bullets = 1;
             roundCount = 0;
             emptyChambers = 0;
-            isModeOne = true;
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -148,23 +146,17 @@
             let shot;
             switch(mode) {
                 case 1:
-                    if (isModeOne) {
-                        shot = Math.floor(Math.random() * 6) + 1;
-                        if (roundCount <= 5) {
-                            if (shot === 6) {
-                                gameOver('빵!');
-                            } else {
-                                survivedCount++;
-                                alert('딸깍...');
-                            }
+                    shot = Math.floor(Math.random() * 6) + 1;
+                    if (survivedCount < 5) {
+                        if (shot === 6) {
+                            gameOver('빵!');
                         } else {
-                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                            isModeOne = false;
+                            survivedCount++;
+                            alert('딸깍...');
                         }
                     } else {
-                        // 모드 1-2: 5/6 확률로 진행
-                        shot = Math.floor(Math.random() * 6) + 1;
-                        if (shot <= 5) {
+                        alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
+                        if (shot < 6) {
                             gameOver('빵!');
                         } else {
                             alert('딸깍...');
@@ -177,7 +169,7 @@
                         gameOver('빵!');
                     } else {
                         currentChamber++;
-                        emptyChambers++;
+                        emptyChambers++;  // 모드 2에서 시행 횟수마다 빈 칸을 하나씩 채움
                         alert('딸깍...');
                     }
                     break;
@@ -207,13 +199,13 @@
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
                 
-                // 빨간 원: 5/6 확률로 차오르는 총알
-                if (isModeOne && roundCount > 5 && i < 5) {
+                // 빨간 원: 오른쪽부터 차오르는 총알
+                if (i >= totalChambers - bullets) {
                     chamber.classList.add('bullet');
                 } 
-                // 빨간 원: 1/6 확률로 차오르는 총알 (모드 1-1에서 사용)
-                else if (!isModeOne && i < 5) {
-                    chamber.classList.add('bullet');
+                // 회색 원: 왼쪽부터 차오르는 빈 칸 (모드 2에서만 적용)
+                else if (mode === 2 && i < emptyChambers) {
+                    chamber.classList.add('empty');
                 }
                 bulletContainer.appendChild(chamber);
             }
