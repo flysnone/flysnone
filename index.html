@@ -21,34 +21,32 @@
             max-width: 600px;
             padding: 20px;
         }
-        .button {
+        .button, .game-btn {
             padding: 10px 20px;
             font-size: 16px;
             margin: 10px;
             cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
             border-radius: 5px;
             width: 100%;
         }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
         .game-btn {
-            display: inline-block;
-            padding: 20px 40px;
-            font-size: 24px;
             background-color: #f44336;
             color: white;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
         }
         .status {
             font-size: 18px;
             margin: 10px;
         }
-        .hidden {
-            display: none;
+        .bullet-status {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
         }
         .chamber {
             display: inline-block;
@@ -64,11 +62,6 @@
         .empty {
             background-color: gray;
         }
-        .bullet-status {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
         .game-over {
             position: fixed;
             top: 0;
@@ -83,19 +76,6 @@
             font-size: 48px;
             font-weight: bold;
             z-index: 9999;
-        }
-        @media (max-width: 600px) {
-            .game-btn {
-                font-size: 20px;
-                padding: 15px 30px;
-            }
-            .button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
-            .status {
-                font-size: 16px;
-            }
         }
     </style>
 </head>
@@ -118,25 +98,15 @@
     </div>
 
     <script>
-        let mode;
-        let survivedCount = 0;
-        let currentChamber = 1;
-        let bullets = 1;
-        let roundCount = 0;
-        let emptyChambers = 0;
-        let isModeOne = true; // 모드 1을 추적
+        let mode, roundCount = 0, bullets = 1, isModeOne = true, isGameOver = false;
         const totalChambers = 6;
-        let isGameOver = false;
 
         function startGame(selectedMode) {
             mode = selectedMode;
-            survivedCount = 0;
-            currentChamber = 1;
-            bullets = 1;
             roundCount = 0;
-            emptyChambers = 0;
+            bullets = 1;
             isModeOne = true;
-            isGameOver = false; // 게임 상태 초기화
+            isGameOver = false;
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -145,50 +115,34 @@
         }
 
         function fireTrigger() {
-            if (isGameOver) return; // 게임이 끝났으면 더 이상 진행되지 않음
+            if (isGameOver) return;
 
             roundCount++;
             let shot;
+
             switch(mode) {
                 case 1:
-                    if (isModeOne) {
-                        shot = Math.floor(Math.random() * 6) + 1;
-                        if (roundCount <= 5) {
-                            if (shot === 6) {
-                                gameOver('빵!');
-                            } else {
-                                survivedCount++;
-                                alert('딸깍...');
-                            }
-                        } else {
-                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                            isModeOne = false; // 모드 1-2로 전환
-                        }
+                    shot = Math.floor(Math.random() * 6) + 1;
+                    if (roundCount <= 5) {
+                        if (shot === 6) gameOver('빵!');
+                        else alert('딸깍...');
+                    } else if (isModeOne) {
+                        alert('조금 지루한 감이 없지 않아 있네요. 이제 확률을 뒤집어 볼까요?');
+                        isModeOne = false; 
                     } else {
-                        // 모드 1-2: 5/6 확률로 진행
-                        shot = Math.floor(Math.random() * 6) + 1;
-                        if (shot <= 5) {
-                            gameOver('빵!');
-                        } else {
-                            alert('딸깍...');
-                        }
+                        if (shot <= 5) gameOver('빵!');
+                        else alert('딸깍...');
                     }
                     break;
                 case 2:
-                    shot = Math.floor(Math.random() * (7 - currentChamber)) + 1;
-                    if (shot === 1) {
-                        gameOver('빵!');
-                    } else {
-                        currentChamber++;
-                        emptyChambers++;
-                        alert('딸깍...');
-                    }
+                    shot = Math.floor(Math.random() * (7 - roundCount)) + 1;
+                    if (shot === 1) gameOver('빵!');
+                    else alert('딸깍...');
                     break;
                 case 3:
                     shot = Math.floor(Math.random() * 6) + 1;
-                    if (shot <= bullets) {
-                        gameOver('빵!');
-                    } else {
+                    if (shot <= bullets) gameOver('빵!');
+                    else {
                         bullets++;
                         alert('딸깍...');
                     }
@@ -205,31 +159,17 @@
         function updateBulletStatus() {
             const bulletContainer = document.getElementById('bullet-status');
             bulletContainer.innerHTML = '';
-
+            
             for (let i = 0; i < totalChambers; i++) {
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
-                
-                if (mode === 1 && !isModeOne) {
-                    // 모드 1-2: 5/6 확률로 차오르는 총알
-                    if (i < 5) {
-                        chamber.classList.add('bullet');
-                    }
-                } 
-                else if (mode === 2) {
-                    // 모드 2: 빈 칸이 점차 채워짐
-                    if (i < emptyChambers) {
-                        chamber.classList.add('empty');
-                    } else {
-                        chamber.classList.add('bullet');
-                    }
-                } 
-                else if (mode === 3) {
-                    // 모드 3: 매번 총알이 하나씩 증가
-                    if (i < bullets) {
-                        chamber.classList.add('bullet');
-                    }
+
+                if (mode === 1 && !isModeOne && i < 5 || mode === 2 && i < roundCount || mode === 3 && i < bullets) {
+                    chamber.classList.add('bullet');
+                } else {
+                    chamber.classList.add('empty');
                 }
+
                 bulletContainer.appendChild(chamber);
             }
         }
@@ -239,9 +179,8 @@
             gameOverScreen.classList.add('game-over');
             gameOverScreen.textContent = message;
             document.body.appendChild(gameOverScreen);
-
             document.getElementById('trigger-btn').disabled = true;
-            isGameOver = true; // 게임 종료 상태 설정
+            isGameOver = true;
         }
     </script>
 </body>
