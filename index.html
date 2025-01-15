@@ -56,7 +56,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: black;
+            background-color: black; /* 기본은 검은색 */
         }
         .bullet {
             background-color: red;
@@ -171,7 +171,7 @@
                     }
                     break;
                 case 2:
-                    // 빈 챔버를 제외하고 진행
+                    // 모드 2: 오른쪽에 빨간 원, 나머지 회차마다 왼쪽으로 회색 원 채우기
                     shot = Math.floor(Math.random() * (7 - emptyChambers)) + 1;
                     if (shot === 1) {
                         gameOver('빵!');
@@ -206,12 +206,27 @@
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
                 
-                // 모드 1에서 총알 상태 업데이트
-                if (isModeOne && roundCount > 5 && i < 5) {
-                    chamber.classList.add('bullet');
-                } else if (!isModeOne && i < 5) {
-                    chamber.classList.add('bullet');
+                if (mode === 1) {
+                    // 빨간 원이 오른쪽에서 왼쪽으로 발생
+                    if (isModeOne && roundCount > 5 && i < 5) {
+                        chamber.classList.add('bullet');
+                    } else if (!isModeOne && i < 5) {
+                        chamber.classList.add('bullet');
+                    }
+                } else if (mode === 2) {
+                    // 모드 2: 오른쪽에 빨간 원, 나머지 왼쪽에 회색 원
+                    if (i === 5) {
+                        chamber.classList.add('bullet');
+                    } else if (i < 5 && i >= 5 - emptyChambers) {
+                        chamber.classList.add('empty');
+                    }
+                } else if (mode === 3) {
+                    // 모드 3: 오른쪽에 빨간 원, 왼쪽으로 진행될수록 빨간 원이 증가
+                    if (i >= 6 - bullets) {
+                        chamber.classList.add('bullet');
+                    }
                 }
+
                 bulletContainer.appendChild(chamber);
             }
         }
