@@ -163,14 +163,18 @@
                 chamber.classList.add('chamber');
 
                 if (mode === 1) {
-                    if (roundCount <= 5 && i === 5) chamber.classList.add('bullet'); // 모드 1-1: 5회까지 빨간 원 1개
-                    else if (roundCount > 5 && i <= 4) chamber.classList.add('bullet'); // 모드 1-2: 6회부터 빨간 원 5개
-                    else chamber.classList.add('empty'); // 나머지는 빈 칸
+                    if (roundCount <= 5) {
+                        if (i === 5) chamber.classList.add('bullet'); // 1-1: 첫 5회는 빨간 원 1개
+                        else chamber.classList.add('empty'); // 나머지는 검은 원
+                    } else {
+                        if (i <= 4) chamber.classList.add('bullet'); // 1-2: 6회부터 빨간 원 5개
+                        else chamber.classList.add('empty'); // 나머지는 검은 원
+                    }
                 } else if (mode === 2) {
-                    if (i < roundCount) chamber.classList.add('empty'); // 모드 2: 회차가 진행될수록 빈 칸 회색으로 변경
-                    if (i === 0) chamber.classList.add('bullet'); // 모드 2: 빨간 원은 항상 첫 번째 칸에만
+                    if (i < roundCount) chamber.classList.add('empty'); // 회차 진행마다 빈 칸 회색으로 변경
+                    if (i === 0) chamber.classList.add('bullet'); // 첫 칸은 빨간 원 유지
                 } else if (mode === 3) {
-                    if (i < bullets) chamber.classList.add('bullet'); // 모드 3: 총알이 늘어나면서 빨간 원이 추가됨
+                    if (i < bullets) chamber.classList.add('bullet'); // 총알 수 만큼 빨간 원 추가
                     else chamber.classList.add('empty'); // 나머지는 빈 칸
                 }
 
