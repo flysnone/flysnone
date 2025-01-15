@@ -14,58 +14,46 @@
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            overflow: hidden;
         }
         .container {
             text-align: center;
             width: 100%;
             max-width: 600px;
             padding: 20px;
-            box-sizing: border-box;
         }
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-        .button {
-            padding: 12px 20px;
+        .button, .game-btn {
+            padding: 15px 30px;
             font-size: 18px;
+            margin: 10px auto;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             width: 100%;
-            max-width: 300px;
-            text-align: center;
+            max-width: 400px;
+            display: block;
         }
         .game-btn {
-            padding: 20px 40px;
-            font-size: 24px;
             background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 300px;
-            margin-top: 20px;
         }
         .status {
             font-size: 18px;
-            margin: 10px 0;
+            margin: 10px;
+        }
+        .hidden {
+            display: none;
         }
         .bullet-status {
             display: flex;
             justify-content: center;
             margin-top: 20px;
+            gap: 5px;
         }
         .chamber {
-            display: inline-block;
-            margin: 5px;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background-color: black;
         }
@@ -74,9 +62,6 @@
         }
         .empty {
             background-color: gray;
-        }
-        .hidden {
-            display: none;
         }
         .game-over {
             position: fixed;
@@ -93,27 +78,13 @@
             font-weight: bold;
             z-index: 9999;
         }
-        @media (max-width: 600px) {
-            .button, .game-btn {
-                font-size: 16px;
-                padding: 10px 15px;
-            }
-            .status {
-                font-size: 16px;
-            }
-            .chamber {
-                width: 15px;
-                height: 15px;
-                margin: 3px;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>러시안 룰렛</h1>
-        <div id="mode-selection" class="button-container">
+        <div id="mode-selection">
             <button class="button" onclick="startGame(1)">1. 매번 약실을 돌리는 룰렛</button>
             <button class="button" onclick="startGame(2)">2. 약실을 돌리지 않는 룰렛</button>
             <button class="button" onclick="startGame(3)">3. 매번 약실에 총알을 채우는 룰렛</button>
@@ -155,7 +126,7 @@
         function fireTrigger() {
             roundCount++;
             let shot;
-            switch(mode) {
+            switch (mode) {
                 case 1:
                     if (isModeOne) {
                         shot = Math.floor(Math.random() * 6) + 1;
@@ -163,11 +134,10 @@
                             if (shot === 6) {
                                 gameOver('빵!');
                             } else {
-                                survivedCount++;
                                 alert('딸깍...');
                             }
                         } else {
-                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
+                            alert('이제 확률이 바뀝니다! 살 확률 1/6, 죽을 확률 5/6입니다.');
                             isModeOne = false;
                         }
                     } else {
