@@ -145,18 +145,24 @@
             roundCount++;
             let shot;
             switch(mode) {
-                case 1:
-                    shot = Math.floor(Math.random() * 6) + 1;
-                    if (survivedCount < 5) {
-                        if (shot === 6) {
-                            gameOver('빵!');
+                               case 1:
+                    if (isModeOne) {
+                        shot = Math.floor(Math.random() * 6) + 1;
+                        if (roundCount <= 5) {
+                            if (shot === 6) {
+                                gameOver('빵!');
+                            } else {
+                                survivedCount++;
+                                alert('딸깍...');
+                            }
                         } else {
-                            survivedCount++;
-                            alert('딸깍...');
+                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
+                            isModeOne = false;
                         }
                     } else {
-                        alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                        if (shot < 6) {
+                        // 모드 1-2: 5/6 확률로 진행
+                        shot = Math.floor(Math.random() * 6) + 1;
+                        if (shot <= 5) {
                             gameOver('빵!');
                         } else {
                             alert('딸깍...');
