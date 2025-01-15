@@ -1,5 +1,4 @@
 <!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,6 +125,7 @@
         let roundCount = 0;
         let emptyChambers = 0;
         const totalChambers = 6;
+        let gameMode = 1;  // 모드 1-1으로 시작
 
         function startGame(selectedMode) {
             mode = selectedMode;
@@ -134,6 +134,7 @@
             bullets = 1;
             roundCount = 0;
             emptyChambers = 0;
+            gameMode = 1; // 모드 1-1으로 시작
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -144,8 +145,9 @@
         function fireTrigger() {
             roundCount++;
             let shot;
-            switch(mode) {
+            switch(gameMode) {
                 case 1:
+                    // 모드 1-1: 1/6 확률
                     shot = Math.floor(Math.random() * 6) + 1;
                     if (survivedCount < 5) {
                         if (shot === 6) {
@@ -155,42 +157,21 @@
                             alert('딸깍...');
                         }
                     } else {
+                        // 5회차 후, 모드 1-2로 전환
                         alert('딸깍...');
                         alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-
-                        // 5회차 후 방아쇠 버튼 비활성화
-                        document.getElementById('trigger-btn').disabled = true;
-
-                        // 알림 후 6회차로 진행
-                        setTimeout(function() {
-                            // 총알 5개로 설정
-                            bullets = 5;
-                            updateBulletStatus(); // 총알 상태 업데이트
-
-                            // 방아쇠 버튼을 다시 활성화
-                            document.getElementById('trigger-btn').disabled = false;
-
-                            // 알림을 띄운 후 6회차 진행
-                            alert('이제 6회차부터 확률이 5/6으로 바뀌었습니다. 방아쇠를 다시 당겨주세요!');
-                        }, 100); // 짧은 시간 후 방아쇠 버튼 활성화
+                        gameMode = 2; // 모드 1-2로 전환
+                        bullets = 5; // 5/6 확률로 진행되며 총알 5개
+                        updateBulletStatus(); // 총알 상태 업데이트
                     }
                     break;
                 case 2:
-                    shot = Math.floor(Math.random() * (7 - currentChamber)) + 1;
-                    if (shot === 1) {
-                        gameOver('빵!');
-                    } else {
-                        currentChamber++;
-                        emptyChambers++;
-                        alert('딸깍...');
-                    }
-                    break;
-                case 3:
+                    // 모드 1-2: 5/6 확률
                     shot = Math.floor(Math.random() * 6) + 1;
                     if (shot <= bullets) {
                         gameOver('빵!');
                     } else {
-                        bullets++;
+                        bullets--;
                         alert('딸깍...');
                     }
                     break;
@@ -215,10 +196,6 @@
                 if (i >= totalChambers - bullets) {
                     chamber.classList.add('bullet');
                 } 
-                // 회색 원: 왼쪽부터 차오르는 빈 칸 (모드 2에서만 적용)
-                else if (mode === 2 && i < emptyChambers) {
-                    chamber.classList.add('empty');
-                }
                 bulletContainer.appendChild(chamber);
             }
         }
