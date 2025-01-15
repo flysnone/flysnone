@@ -56,18 +56,13 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: black; /* 기본은 검은색 */
+            background-color: black;
         }
         .bullet {
             background-color: red;
         }
         .empty {
             background-color: gray;
-        }
-        .bullet-status {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
         }
         .game-over {
             position: fixed;
@@ -112,7 +107,7 @@
             <div id="status" class="status">
                 <p>시행 횟수: <span id="round-count">0</span></p>
             </div>
-            <div id="bullet-status" class="bullet-status"></div>
+            <div id="bullet-status" class="status"></div>
             <button id="trigger-btn" class="game-btn" onclick="fireTrigger()">방아쇠 당기기</button>
         </div>
     </div>
@@ -171,7 +166,7 @@
                     }
                     break;
                 case 2:
-                    // 모드 2: 오른쪽에 빨간 원, 나머지 회차마다 왼쪽으로 회색 원 채우기
+                    // 모드 2: 오른쪽에 빨간 원, 나머지 회차마다 왼쪽부터 회색 원 채우기
                     shot = Math.floor(Math.random() * (7 - emptyChambers)) + 1;
                     if (shot === 1) {
                         gameOver('빵!');
@@ -202,32 +197,55 @@
             const bulletContainer = document.getElementById('bullet-status');
             bulletContainer.innerHTML = '';
 
-            for (let i = 0; i < totalChambers; i++) {
-                const chamber = document.createElement('div');
-                chamber.classList.add('chamber');
-                
-                if (mode === 1) {
-                    // 빨간 원이 오른쪽에서 왼쪽으로 발생
-                    if (isModeOne && roundCount > 5 && i < 5) {
-                        chamber.classList.add('bullet');
-                    } else if (!isModeOne && i < 5) {
-                        chamber.classList.add('bullet');
+            switch(mode) {
+                case 1:
+                    if (isModeOne) {
+                        // 모드 1-1: 빨간 원은 맨 오른쪽에만 있음
+                        for (let i = 0; i < totalChambers; i++) {
+                            const chamber = document.createElement('div');
+                            chamber.classList.add('chamber');
+                            if (i === 5) {
+                                chamber.classList.add('bullet'); // 빨간 원
+                            }
+                            bulletContainer.appendChild(chamber);
+                        }
+                    } else {
+                        // 모드 1-2: 빨간 원 5개, 검은 원 1개
+                        for (let i = 0; i < totalChambers; i++) {
+                            const chamber = document.createElement('div');
+                            chamber.classList.add('chamber');
+                            if (i < 5) {
+                                chamber.classList.add('bullet'); // 빨간 원
+                            }
+                            bulletContainer.appendChild(chamber);
+                        }
                     }
-                } else if (mode === 2) {
-                    // 모드 2: 오른쪽에 빨간 원, 나머지 왼쪽에 회색 원
-                    if (i === 5) {
-                        chamber.classList.add('bullet');
-                    } else if (i < 5 && i >= 5 - emptyChambers) {
-                        chamber.classList.add('empty');
+                    break;
+                case 2:
+                    // 모드 2: 회차가 진행될수록 왼쪽에서 오른쪽으로 검은 원을 회색으로 변경
+                    for (let i = 0; i < totalChambers; i++) {
+                        const chamber = document.createElement('div');
+                        chamber.classList.add('chamber');
+                        if (i < emptyChambers) {
+                            chamber.classList.add('empty'); // 회색 원
+                        }
+                        if (i === 5) {
+                            chamber.classList.add('bullet'); // 빨간 원
+                        }
+                        bulletContainer.appendChild(chamber);
                     }
-                } else if (mode === 3) {
-                    // 모드 3: 오른쪽에 빨간 원, 왼쪽으로 진행될수록 빨간 원이 증가
-                    if (i >= 6 - bullets) {
-                        chamber.classList.add('bullet');
+                    break;
+                case 3:
+                    // 모드 3: 회차가 진행될수록 오른쪽에서 왼쪽으로 빨간 원이 추가
+                    for (let i = 0; i < totalChambers; i++) {
+                        const chamber = document.createElement('div');
+                        chamber.classList.add('chamber');
+                        if (i >= totalChambers - bullets) {
+                            chamber.classList.add('bullet'); // 빨간 원
+                        }
+                        bulletContainer.appendChild(chamber);
                     }
-                }
-
-                bulletContainer.appendChild(chamber);
+                    break;
             }
         }
 
