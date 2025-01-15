@@ -124,7 +124,7 @@
         let currentChamber = 1;
         let bullets = 1;
         let roundCount = 0;
-        let emptyChambers = 0; // 모드 2에서 회색 원을 차는 변수
+        let emptyChambers = 0;
         const totalChambers = 6;
 
         function startGame(selectedMode) {
@@ -157,17 +157,22 @@
                     } else {
                         alert('딸깍...');
                         alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                        
-                        // 6회차부터 총알을 5개로 설정
-                        bullets = 5;
-                        updateBulletStatus(); // 총알 상태 업데이트
-                        
-                        // 6회차부터 확률 5/6로 변경
-                        if (shot <= 5) {
-                            gameOver('빵!');
-                        } else {
-                            alert('딸깍...');
-                        }
+
+                        // 5회차 후 방아쇠 버튼 비활성화
+                        document.getElementById('trigger-btn').disabled = true;
+
+                        // 알림 후 6회차로 진행
+                        setTimeout(function() {
+                            // 총알 5개로 설정
+                            bullets = 5;
+                            updateBulletStatus(); // 총알 상태 업데이트
+
+                            // 방아쇠 버튼을 다시 활성화
+                            document.getElementById('trigger-btn').disabled = false;
+
+                            // 알림을 띄운 후 6회차 진행
+                            alert('이제 6회차부터 확률이 5/6으로 바뀌었습니다. 방아쇠를 다시 당겨주세요!');
+                        }, 100); // 짧은 시간 후 방아쇠 버튼 활성화
                     }
                     break;
                 case 2:
