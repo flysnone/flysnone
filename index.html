@@ -155,8 +155,15 @@
                             alert('딸깍...');
                         }
                     } else {
+                        alert('딸깍...');
                         alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                        if (shot < 6) {
+                        
+                        // 6회차부터 총알을 5개로 설정
+                        bullets = 5;
+                        updateBulletStatus(); // 총알 상태 업데이트
+                        
+                        // 6회차부터 확률 5/6로 변경
+                        if (shot <= 5) {
                             gameOver('빵!');
                         } else {
                             alert('딸깍...');
@@ -169,7 +176,7 @@
                         gameOver('빵!');
                     } else {
                         currentChamber++;
-                        emptyChambers++;  // 모드 2에서 시행 횟수마다 빈 칸을 하나씩 채움
+                        emptyChambers++;
                         alert('딸깍...');
                     }
                     break;
