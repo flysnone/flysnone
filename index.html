@@ -1,4 +1,5 @@
 <!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,9 +125,8 @@
         let bullets = 1;
         let roundCount = 0;
         let emptyChambers = 0;
+        let isModeOne = true;
         const totalChambers = 6;
-        let gameMode = 1;  // 모드 1-1으로 시작
-        let mode1_2Notified = false; // 모드 1-2 알림 여부
 
         function startGame(selectedMode) {
             mode = selectedMode;
@@ -135,8 +135,7 @@
             bullets = 1;
             roundCount = 0;
             emptyChambers = 0;
-            gameMode = 1; // 모드 1-1으로 시작
-            mode1_2Notified = false; // 모드 1-2 알림 초기화
+            isModeOne = true;
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -147,38 +146,47 @@
         function fireTrigger() {
             roundCount++;
             let shot;
-            switch(gameMode) {
+            switch(mode) {
                 case 1:
-                    // 모드 1-1: 1/6 확률
-                    shot = Math.floor(Math.random() * 6) + 1;
-                    if (survivedCount < 5) {
-                        if (shot === 6) {
-                            gameOver('빵!');
+                    if (isModeOne) {
+                        shot = Math.floor(Math.random() * 6) + 1;
+                        if (roundCount <= 5) {
+                            if (shot === 6) {
+                                gameOver('빵!');
+                            } else {
+                                survivedCount++;
+                                alert('딸깍...');
+                            }
                         } else {
-                            survivedCount++;
-                            alert('딸깍...');
+                            alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
+                            isModeOne = false;
                         }
                     } else {
-                        // 5회차 후, 모드 1-2로 전환
-                        alert('딸깍...');
-                        alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                        gameMode = 2; // 모드 1-2로 전환
-                        bullets = 5; // 5/6 확률로 진행되며 총알 5개
-                        mode1_2Notified = true; // 알림이 나온 상태로 기록
-                        updateBulletStatus(); // 총알 상태 업데이트
+                        // 모드 1-2: 5/6 확률로 진행
+                        shot = Math.floor(Math.random() * 6) + 1;
+                        if (shot <= 5) {
+                            gameOver('빵!');
+                        } else {
+                            alert('딸깍...');
+                        }
                     }
                     break;
                 case 2:
-                    // 모드 1-2: 5/6 확률 (알림은 한 번만 나오고 이후 자동 진행)
-                    if (!mode1_2Notified) {
-                        alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                        mode1_2Notified = true; // 알림을 기록하고 이후에는 나타나지 않도록 설정
+                    shot = Math.floor(Math.random() * (7 - currentChamber)) + 1;
+                    if (shot === 1) {
+                        gameOver('빵!');
+                    } else {
+                        currentChamber++;
+                        emptyChambers++;
+                        alert('딸깍...');
                     }
+                    break;
+                case 3:
                     shot = Math.floor(Math.random() * 6) + 1;
                     if (shot <= bullets) {
                         gameOver('빵!');
                     } else {
-                        bullets--;
+                        bullets++;
                         alert('딸깍...');
                     }
                     break;
@@ -199,10 +207,14 @@
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
                 
-                // 빨간 원: 오른쪽부터 차오르는 총알
-                if (i >= totalChambers - bullets) {
+                // 빨간 원: 5/6 확률로 차오르는 총알
+                if (isModeOne && roundCount > 5 && i < 5) {
                     chamber.classList.add('bullet');
                 } 
+                // 빨간 원: 1/6 확률로 차오르는 총알 (모드 1-1에서 사용)
+                else if (!isModeOne && i < 5) {
+                    chamber.classList.add('bullet');
+                }
                 bulletContainer.appendChild(chamber);
             }
         }
