@@ -98,7 +98,7 @@
     </div>
 
     <script>
-        let mode, roundCount = 0, bullets = 1, isModeOne = true, isGameOver = false;
+        let mode, roundCount = 0, bullets = 1, isModeOne = true, isGameOver = false, emptyChambers = 0;
         const totalChambers = 6;
 
         function startGame(selectedMode) {
@@ -106,6 +106,7 @@
             roundCount = 0;
             bullets = 1;
             isModeOne = true;
+            emptyChambers = 0;
             isGameOver = false;
             updateStatus();
             updateBulletStatus();
@@ -121,25 +122,22 @@
             let shot;
 
             switch(mode) {
-                case 1:
+                case 1: // 모드 1
                     shot = Math.floor(Math.random() * 6) + 1;
-                    if (roundCount <= 5) {
+                    if (roundCount <= 5) { // 모드 1-1
                         if (shot === 6) gameOver('빵!');
                         else alert('딸깍...');
-                    } else if (isModeOne) {
-                        alert('조금 지루한 감이 없지 않아 있네요. 이제 확률을 뒤집어 볼까요?');
-                        isModeOne = false; 
-                    } else {
+                    } else { // 모드 1-2
                         if (shot <= 5) gameOver('빵!');
                         else alert('딸깍...');
                     }
                     break;
-                case 2:
+                case 2: // 모드 2
                     shot = Math.floor(Math.random() * (7 - roundCount)) + 1;
                     if (shot === 1) gameOver('빵!');
                     else alert('딸깍...');
                     break;
-                case 3:
+                case 3: // 모드 3
                     shot = Math.floor(Math.random() * 6) + 1;
                     if (shot <= bullets) gameOver('빵!');
                     else {
@@ -159,15 +157,21 @@
         function updateBulletStatus() {
             const bulletContainer = document.getElementById('bullet-status');
             bulletContainer.innerHTML = '';
-            
+
             for (let i = 0; i < totalChambers; i++) {
                 const chamber = document.createElement('div');
                 chamber.classList.add('chamber');
 
-                if (mode === 1 && !isModeOne && i < 5 || mode === 2 && i < roundCount || mode === 3 && i < bullets) {
-                    chamber.classList.add('bullet');
-                } else {
-                    chamber.classList.add('empty');
+                if (mode === 1) {
+                    if (roundCount <= 5 && i === 5) chamber.classList.add('bullet'); // 모드 1-1: 5회까지 빨간 원 1개
+                    else if (roundCount > 5 && i <= 4) chamber.classList.add('bullet'); // 모드 1-2: 6회부터 빨간 원 5개
+                    else chamber.classList.add('empty'); // 나머지는 빈 칸
+                } else if (mode === 2) {
+                    if (i < roundCount) chamber.classList.add('empty'); // 모드 2: 회차가 진행될수록 빈 칸 회색으로 변경
+                    if (i === 0) chamber.classList.add('bullet'); // 모드 2: 빨간 원은 항상 첫 번째 칸에만
+                } else if (mode === 3) {
+                    if (i < bullets) chamber.classList.add('bullet'); // 모드 3: 총알이 늘어나면서 빨간 원이 추가됨
+                    else chamber.classList.add('empty'); // 나머지는 빈 칸
                 }
 
                 bulletContainer.appendChild(chamber);
