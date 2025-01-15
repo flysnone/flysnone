@@ -125,8 +125,9 @@
         let bullets = 1;
         let roundCount = 0;
         let emptyChambers = 0;
-        let isModeOne = true;
+        let isModeOne = true; // 모드 1을 추적
         const totalChambers = 6;
+        let isGameOver = false;
 
         function startGame(selectedMode) {
             mode = selectedMode;
@@ -136,6 +137,7 @@
             roundCount = 0;
             emptyChambers = 0;
             isModeOne = true;
+            isGameOver = false; // 게임 상태 초기화
             updateStatus();
             updateBulletStatus();
             document.getElementById('mode-selection').classList.add('hidden');
@@ -144,6 +146,8 @@
         }
 
         function fireTrigger() {
+            if (isGameOver) return; // 게임이 끝났으면 더 이상 진행되지 않음
+
             roundCount++;
             let shot;
             switch(mode) {
@@ -159,7 +163,7 @@
                             }
                         } else {
                             alert('조금 지루한 감이 없지 않아 있네요. 그럼 이제 확률을 뒤집어 볼까요? 살 확률은 6분의 1, 죽을 확률은 6분의 5. 자, 다시 시작하겠습니다. 속도를 높여 볼까요?');
-                            isModeOne = false;
+                            isModeOne = false; // 모드 1-2로 전환
                         }
                     } else {
                         // 모드 1-2: 5/6 확률로 진행
@@ -238,6 +242,7 @@
             document.body.appendChild(gameOverScreen);
 
             document.getElementById('trigger-btn').disabled = true;
+            isGameOver = true; // 게임 종료 상태 설정
         }
     </script>
 </body>
